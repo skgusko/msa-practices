@@ -68,10 +68,10 @@ logging:
          
 eureka:
    instance:
-      hostname: 192.168.66.4
+      hostname: 192.168.56.5
    server:
       enableSelfPreservation: false
-      waitTimeInMsWhenSyncEmpty: 5 
+      waitTimeInMsWhenSyncEmpty: 5
    client:
       fetchRegistry: false
       registerWithEureka: false
