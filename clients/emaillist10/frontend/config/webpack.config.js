@@ -39,7 +39,7 @@ module.exports = function (env, argv) {
         plugins: [
             new CaseSensitivePathsPlugin(),
             new webpack.DefinePlugin({
-                API_URL: JSON.stringify(argv.mode === 'production' ? 'http://192.168.66.4:8888/api/emaillist' : 'http://localhost:8888/api/emaillist')
+                API_URL: JSON.stringify(argv.mode === 'production' ? 'http://192.168.56.5:8888/api/emaillist' : 'http://localhost:8888/api/emaillist')
             })
         ],
         devtool: "eval-source-map",
