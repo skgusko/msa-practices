@@ -61,11 +61,11 @@ spring:
        server:
           encrypt.enabled: false
           native:
-              searchLocations: file:///Users/ko/DoWork/STS-Workspace-POSCODX09/msa-practices-config-repo/service-emaillist,
-                               file:///Users/ko/DoWork/STS-Workspace-POSCODX09/msa-practices-config-repo/service-storage,
-                               file:///Users/ko/DoWork/STS-Workspace-POSCODX09/msa-practices-config-repo/service-gallery,
-                               file:///Users/ko/DoWork/STS-Workspace-POSCODX09/msa-practices-config-repo/service-guestbook,
-                               file:///Users/ko/DoWork/STS-Workspace-POSCODX09/msa-practices-config-repo/service-gateway-server
+              searchLocations: file:///Users/ko/Desktop/POSCO_DX/sts-workspace/msa-practices-config-repo/service-emaillist,
+                               file:///Users/ko/Desktop/POSCO_DX/sts-workspace/msa-practices-config-repo/service-storage,
+                               file:///Users/ko/Desktop/POSCO_DX/sts-workspace/msa-practices-config-repo/service-gallery,
+                               file:///Users/ko/Desktop/POSCO_DX/sts-workspace/msa-practices-config-repo/service-guestbook,
+                               file:///Users/ko/Desktop/POSCO_DX/sts-workspace/msa-practices-config-repo/service-gateway-server
 
 logging:
    pattern:
