@@ -8,7 +8,6 @@ spring:
 
 
 ---
-# profile: common(default)
 # configuration: common
 spring:
    cloud:
@@ -29,4 +28,4 @@ spring:
    config:
       activate:
          on-profile: production
-      import: optional:configserver:http://192.168.66.4:7777
+      import: optional:configserver:http://192.168.56.5:7777
