@@ -1,4 +1,4 @@
-package com.poscodx.emaillist.security;
+package emaillist.security;
 
 import java.io.IOException;
 
@@ -30,43 +30,43 @@ public class Config {
 
 	@Bean
 	SecurityFilterChain scurityFilterChain(HttpSecurity http) throws Exception {
-		http
-				.csrf(AbstractHttpConfigurer::disable)
-				.formLogin(AbstractHttpConfigurer::disable)
-				.sessionManagement(sessionManagementCustomizer -> sessionManagementCustomizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.logout(AbstractHttpConfigurer::disable)
-				.authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll());
+        http
+        	.csrf(AbstractHttpConfigurer::disable)
+        	.formLogin(AbstractHttpConfigurer::disable)
+            .sessionManagement(sessionManagementCustomizer -> sessionManagementCustomizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .logout(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll())
+            
+            .oauth2Login(oauth2LoginCustomizer -> {
 
-		http.oauth2Login(oauth2LoginCustomizer -> {
-
-			// OAuth2 Authorization Code Grant Type 적용
-
-			oauth2LoginCustomizer
+				// OAuth2 Authorization Code Grant Type 적용
+				
+				oauth2LoginCustomizer
 					.authorizationEndpoint(authorizationEndpointConfig -> authorizationEndpointConfig.baseUri("/oauth2/authorize"))
 					.redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig.baseUri("/login/oauth2/code/*"))
-
+	
 					//
-					// session을 사용하지 않기 때문에 redirect로 다시 접근할 때는
+					// session을 사용하지 않기 때문에 redirect로 다시 접근할 때는 
 					// OAuth2AuthorizedClientService에 OAuth2AuthorizedClient가 없기 때문에
 					// AccessToken과 RefreshToken이 없음
 					//
 					// .defaultSuccessUrl("/");
-
+					
 					//
 					// 대신,
-					// SuccessHandler가 응답하기 전까지는 OAuth2AuthorizedClientService에
+					// SuccessHandler가 응답하기 전까지는 OAuth2AuthorizedClientService에 
 					// OAuth2AuthorizedClient가 있기 때문에 AccessToken과 RefreshToken을 가져올 수 있다.
 					//
 					.successHandler(authenticationSuccessHandler());
 
-		});
-
+            });
+		
 		return http.build();
 	}
 
 	@Bean
-	AuthenticationSuccessHandler authenticationSuccessHandler() {
-		return new AuthenticationSuccessHandler() {
+    AuthenticationSuccessHandler authenticationSuccessHandler() {
+    	return new AuthenticationSuccessHandler() {
 			@Autowired
 			private ApplicationContext applicationContext;
 
@@ -76,30 +76,30 @@ public class Config {
 				DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User)oAuth2AuthenticationToken.getPrincipal();
 
 				log.info("OIDC: ID JWT: {}", oAuth2AuthenticationToken);
-				log.info("OIDC: Identity of User AuthentiCated: {}", defaultOAuth2User);
+	            log.info("OIDC: Identity of User AuthentiCated: {}", defaultOAuth2User);
 
 				OAuth2AuthorizedClientService oAuth2AuthorizedClientService = applicationContext.getBean(OAuth2AuthorizedClientService.class);
 				OAuth2AuthorizedClient oAuth2AuthorizedClient = oAuth2AuthorizedClientService.loadAuthorizedClient(oAuth2AuthenticationToken.getAuthorizedClientRegistrationId(), oAuth2AuthenticationToken.getName());
-
+				
 				//
 				// Discard Access Token
 				// Grant Flow의 User Agent(Browser)에서 실행되는 JS 클라이언트(React)에게
 				// Access Token 전달이 부자연스럽기 때문에 최초 Access Token은 폐기
-				//
+	    		//
 				OAuth2AccessToken accessToken = oAuth2AuthorizedClient.getAccessToken();
-				log.info("OAuth2: Authorized JWT: Access Token: {}", accessToken.getTokenValue());
-
-				//
+	            log.info("OAuth2: Authorized JWT: Access Token: {}", accessToken.getTokenValue());
+	            
+	            //
 				// refresh token는 HttpOnly Cookie로 구워 클라이언트(React) 애플리케이션에게 전달
 				//
-				OAuth2RefreshToken refreshToken = oAuth2AuthorizedClient.getRefreshToken();
-				log.info("OAuth2: Authorized JWT: Refresh Token: {}", refreshToken.getTokenValue());
-
-
-				//*
-				response.getWriter().println("AccessToken:" + accessToken.getTokenValue());
-				response.getWriter().println("Refresh Token:" + refreshToken.getTokenValue());
-	            /*/
+	            OAuth2RefreshToken refreshToken = oAuth2AuthorizedClient.getRefreshToken();
+                log.info("OAuth2: Authorized JWT: Refresh Token: {}", refreshToken.getTokenValue());
+	            
+	            
+	            //*
+	            response.getWriter().println("AccessToken:" + accessToken.getTokenValue());
+	            response.getWriter().println("Refresh Token:" + refreshToken.getTokenValue());
+	            /*/ 
 	            ResponseCookie cookie = ResponseCookie
 	                    .from("refreshToken", refreshToken.getTokenValue())
 	                	.path("/")
@@ -111,16 +111,16 @@ public class Config {
 
 	            response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY); // 302
 	            response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-	            response.setHeader("Pragma", "no-cache");
-	            response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-	            response.sendRedirect("/"); // 클라이언트(React) 애플리케이션 랜딩!
+	            response.setHeader("Pragma", "no-cache");	            
+	            response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());	
+	            response.sendRedirect("/"); // 클라이언트(React) 애플리케이션 랜딩!									
 	            //*/
 			}
-		};
-	}
-
-	@Bean
-	RestTemplate restTemplte() {
+    	};
+    }
+	
+    @Bean
+    RestTemplate restTemplte() {
 		return new RestTemplate();
-	}
+	}	
 }

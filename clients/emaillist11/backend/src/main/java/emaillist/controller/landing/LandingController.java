@@ -1,4 +1,4 @@
-package com.poscodx.emaillist.controller;
+package emaillist.controller.landing;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

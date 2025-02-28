@@ -1,4 +1,4 @@
-package com.poscodx.emaillist;
+package emaillist;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConf
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {ErrorMvcAutoConfiguration.class})
-public class EmaillistOAuth2Client {
+public class EmaillistApplication {
     public static void main(String[] args) {
-        SpringApplication.run(EmaillistOAuth2Client.class, args);
+        SpringApplication.run(EmaillistApplication.class, args);
     }
 }

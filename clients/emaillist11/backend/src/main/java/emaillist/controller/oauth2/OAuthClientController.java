@@ -1,4 +1,4 @@
-package com.poscodx.emaillist.controller;
+package emaillist.controller.oauth2;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.poscodx.emaillist.dto.JsonResult;
+import emaillist.dto.JsonResult;
 
 @RestController
 public class OAuthClientController {
@@ -53,7 +53,8 @@ public class OAuthClientController {
 	}
 
 	@GetMapping("/logout")
-	public ResponseEntity<JsonResult> logout(@RequestHeader(value="Authorization", required=true, defaultValue="") String bearerToken, @CookieValue(name = "refreshToken", defaultValue = "") String refreshToken) {
+	public ResponseEntity<JsonResult<?>> logout(@RequestHeader(value="Authorization", required=true, defaultValue="") String bearerToken, @CookieValue(defaultValue = "") String refreshToken) {
+		
 		String endSessionEndpoint = issuerUri + "/protocol/openid-connect/logout";
 		String accessToken = Pattern.compile("(?i)Bearer ", Pattern.UNICODE_CASE).matcher(bearerToken).replaceAll("");
 		
@@ -77,6 +78,7 @@ public class OAuthClientController {
 			restTemplate.exchange(endSessionEndpoint, HttpMethod.POST, requestEntity, Map.class);
 			
 			// receive response(204 NO_CONTENT)
+			
 		} catch(HttpClientErrorException ex) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(JsonResult.fail(ex.toString()));
 		}
@@ -96,7 +98,7 @@ public class OAuthClientController {
 	}
 	
 	@GetMapping("/refresh-token")
-	public ResponseEntity<JsonResult> refresh(@CookieValue(name = "refreshToken", defaultValue = "") String refreshToken) {
+	public ResponseEntity<JsonResult<?>> refresh(@CookieValue(required=true, defaultValue = "") String refreshToken) {
 		String accessToken = "";
 		
 		try {
@@ -146,11 +148,13 @@ public class OAuthClientController {
 
 
 
-//	
-//	Client for Resource Owner Password Credentials Grant Type
-//	
+	
+	//	
+	//  [참고] Client for Resource Owner Password Credentials Grant Type
+	//
+	
 	@PostMapping("/auth")
-	public ResponseEntity<JsonResult> auth(@RequestParam(value="username", required=true, defaultValue="") String username, @RequestParam(value="password", required=true, defaultValue="") String password) {
+	public ResponseEntity<JsonResult<?>> auth(@RequestParam(required=true, defaultValue="") String username, @RequestParam(required=true, defaultValue="") String password) {
 		String accessToken = "";
 		String refreshToken = "";
 		
@@ -202,7 +206,7 @@ public class OAuthClientController {
 	// if SessionManagementFilter not set, fails!	
 	//
 	@GetMapping("/test-jwt")
-	public ResponseEntity<JsonResult> landing(@RegisteredOAuth2AuthorizedClient("emaillist-oauth2-client") OAuth2AuthorizedClient authorizedClient) {
+	public ResponseEntity<JsonResult<Map<String, String>>> landing(@RegisteredOAuth2AuthorizedClient("emaillist-oauth2-client") OAuth2AuthorizedClient authorizedClient) {
 		OAuth2AccessToken accessToken = authorizedClient.getAccessToken();
 		OAuth2RefreshToken refreshToken = authorizedClient.getRefreshToken();
 		
