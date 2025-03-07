@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,6 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.client.RestTemplate;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -37,7 +40,7 @@ public class Config {
             .logout(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().permitAll())
             
-            .oauth2Login(oauth2LoginCustomizer -> {
+            .oauth2Login(oauth2LoginCustomizer -> { // 토큰에 부가 정보 추가                                                                                                                                                                               
 
 				// OAuth2 Authorization Code Grant Type 적용
 				
@@ -96,7 +99,7 @@ public class Config {
                 log.info("OAuth2: Authorized JWT: Refresh Token: {}", refreshToken.getTokenValue());
 	            
 	            
-	            //*
+	            /*
 	            response.getWriter().println("AccessToken:" + accessToken.getTokenValue());
 	            response.getWriter().println("Refresh Token:" + refreshToken.getTokenValue());
 	            /*/ 
@@ -104,8 +107,8 @@ public class Config {
 	                    .from("refreshToken", refreshToken.getTokenValue())
 	                	.path("/")
 	                	.maxAge(60*60*24)	// 1day
-	                	.secure(false)		// over HTTPS (x)
-	                	.httpOnly(true)		// Prevent Cross-site scripting (XSS): JavaScript code cannot read or modify
+	                	.secure(false)		// over HTTPS (x). 
+	                	.httpOnly(true)		// Prevent Cross-site scripting (XSS): JavaScript code cannot read or modify (js 접근 못하게)
 	                	.sameSite("strict")	// Prevent CSRF attacks
 	                	.build();
 
